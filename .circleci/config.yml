@@ -178,6 +178,38 @@ jobs:
 
       - process_unit_test_results
 
+  windows-with-checkout:
+    executor:
+      name: win/default # executor type
+      size: "medium"
+      shell: bash.exe
+    working_directory: C:\repo
+    steps:
+      - auth_and_checkout
+
+      # We'll want to use the LTS version of node.
+      - update_node:
+          os: windows
+
+      - run: mkdir test-results
+
+      # Unit tests
+      - run:
+          name: test
+          # Necessary to explicitly use bash, otherwise gradlew's status code won't be received and the job will hang.
+          shell: bash.exe
+          command: yarn test --reporter mocha-junit-reporter --reporter-option mochaFile=test-results/mocha/test-results.xml
+          when: always
+
+      # Linting
+      - run:
+          name: eslint
+          command: yarn lint --format junit --output-file test-results/eslint/eslint.xml
+          shell: bash.exe
+          when: always
+
+      - process_unit_test_results
+
   # Purpose: Runs the unit tests in a Windows environment.
   windows-unit-tests:
     executor:
@@ -416,91 +448,8 @@ workflows:
             <<: *testing_filters
           requires:
             - setup
-      - linux-tarball-test:
+      - windows-with-checkout:
           filters:
             <<: *testing_filters
           requires:
             - setup
-      - windows-tarball-test:
-          filters:
-            <<: *testing_filters
-          requires:
-            - setup
-      - self-evaluation:
-          filters:
-            <<: *testing_filters
-          requires:
-            - setup
-  # Purpose: Publish a release based off of the specified branch.
-  # Triggered by: Pushes to branches that match the format `vX-Y-Z`, where X, Y, and Z are numbers.
-  publish:
-    jobs:
-      # Step 1: Set up the publishing environment.
-      - setup:
-          filters: &publishing_filters # Declare these filters as an anchor so we can reuse them.
-            branches:
-              only: /^v\d+-\d+-\d+/
-      # Step 2: Publish the branch as a release candidate.
-      - release-management/release-package:
-          requires:
-            - setup
-          sign: true
-          github-release: true
-          tag: latest-rc
-          filters:
-            <<: *publishing_filters
-      # Step 3: Smoke test the release candidate on both Linux and Windows.
-      - linux-rc-test:
-          requires:
-            - release-management/release-package
-          filters:
-            <<: *publishing_filters
-      - windows-rc-test:
-          requires:
-            - release-management/release-package
-          filters:
-            <<: *publishing_filters
-      # Step 4: Promote the release candidate to a full release.
-      - release-management/promote-package:
-          candidate: latest-rc
-          target: latest
-          requires:
-            - linux-rc-test
-            - windows-rc-test
-          filters:
-            <<: *publishing_filters
-  # Purpose: Run the tarball tests on Linux and Windows, against the LTS and Current versions of node.
-  # Triggered by: Nothing. Runs automatically on a weekly cadence.
-  weekly-smoke-test:
-    triggers:
-      - schedule:
-          # Cron syntax is "minute[0-59] hour[0-23] date[1-31] month[1-12] day[0-6]". '*' is 'any value', and multiple
-          # values can be specified with a comma-separated list. All times are UTC.
-          # So this expression means to run at 13:30 UTC every Monday. This time was chosen because it corresponds to
-          # 8:30AM CDT, meaning that any issues will be surfaced before start of business on Monday morning.
-          cron: "30 13 * * 1"
-          filters:
-            branches:
-              # Having this run against all branches would be bedlam, so we'll have it run just against dev.
-              only: "dev"
-    jobs:
-      # Step 1: Run the setup task to create the testing environment.
-      - setup
-      # Step 2: Create matrices for the tarball jobs to run with both LTS and Current node.
-      - linux-tarball-test:
-          requires:
-            - setup
-          matrix:
-            # The values of the parameters will be appended to the jobs they create.
-            # So we'll get "linux-tarball-test-lts" and "linux-tarball-test-current"
-            parameters:
-              node-version: [lts, current]
-      - windows-tarball-test:
-          requires:
-            - setup
-          matrix:
-            parameters:
-              # The values of the parameters will be appended to the jobs they create.
-              # So we'll get "windows-tarball-test-lts" and "windows-tarball-test-current"
-              node-version: [lts, current]
-
