@@ -448,7 +448,7 @@ workflows:
             <<: *testing_filters
           requires:
             - setup
-      - windows-with-checkout:
+      - windows-rc-test:
           filters:
             <<: *testing_filters
           requires:
