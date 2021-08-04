@@ -22,7 +22,7 @@ commands:
       - add_ssh_keys:
           fingerprints:
             # CircleCI deploy key (read/write), allows CircleCI to checkout code from Github.
-            - "35:eb:d0:d5:c2:7a:0a:7f:5d:c2:26:fa:5b:3c:ab:83"
+            - "0e:88:a5:7f:1c:d7:87:50:e2:69:65:77:94:c9:7f:e5"
       - checkout
 
   # Purpose: Update node to either LTS or Current version.
@@ -406,7 +406,12 @@ jobs:
       size: "medium"
 
     steps:
-      - auth_and_checkout
+      - add_ssh_keys:
+          fingerprints:
+            # CircleCI deploy key, allows CircleCI to checkout code from Github.
+            # Workaround for issue where SSH key doesn't work properly in Windows.
+            - "35:eb:d0:d5:c2:7a:0a:7f:5d:c2:26:fa:5b:3c:ab:83"
+      - checkout
 
       # We want to run against the LTS version of node
       - update_node:
