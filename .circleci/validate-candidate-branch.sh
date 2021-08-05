@@ -22,6 +22,10 @@ PACKAGE_STRING=v`cat package.json | jq '.version' | tr . - | xargs`
 # Finally, we need to make sure that the branch has all of the same commits as the `release` branch.
 # Fetch release from origin, since we might not necessarily have it yet.
 git fetch origin release
+# Also fetch the branch we were given. This shouldn't be strictly necessary, but it lets us run the script against branches
+# beyond the current branch.
+git fetch origin ${SCANNER_BRANCH}
+
 # Compare the commits on both branches by using the `git log` command, then pipe that into `wc` to get the character count,
 # and use xargs to trim white space.
 DIFFERENCE=`git diff release..${SCANNER_BRANCH} | wc -m | xargs`
