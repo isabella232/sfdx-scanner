@@ -345,9 +345,7 @@ jobs:
     <<: *defaults
     steps:
       - auth_and_checkout
-      - run: git fetch origin release
-      - run: git diff dev..${CIRCLE_BRANCH}
-      - run: git diff dev..release
+      - run .circleci/validate-candidate-branch.sh ${CIRCLE_BRANCH}
 
   # Purpose: In a Linux environment, install the published version of the plugin whose tag is `latest-rc`, then run the
   # smoke test script against it. This helps ensure the overall stability of a release candidate, so we can confidently
