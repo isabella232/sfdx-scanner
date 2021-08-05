@@ -345,7 +345,7 @@ jobs:
     <<: *defaults
     steps:
       - auth_and_checkout
-      - run: git fetch release
+      - run: git fetch origin release
       - run: git diff dev..${CIRCLE_BRANCH}
       - run: git diff dev..release
 
