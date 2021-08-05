@@ -14,7 +14,9 @@ SCANNER_BRANCH=$1
 # - Logging the package.json with `cat`
 # - Feeding that through `jq` and pulling out the "version" property
 # - Replacing the dots in the version property with dashes.
-PACKAGE_STRING=`cat package.json | jq '.version' | tr . -`
+# - Using xargs to strip off the leading and trailing quotes.
+# - Tacking a 'v' onto the start.
+PACKAGE_STRING=v`cat package.json | jq '.version' | tr . - | xargs`
 [[ ${SCANNER_BRANCH} == ${PACKAGE_STRING} ]] || (echo "Branch name must match version defined in package.json" && exit 1)
 
 # Finally, we need to make sure that the branch has all of the same commits as the `release` branch.
