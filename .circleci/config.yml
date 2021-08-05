@@ -345,7 +345,7 @@ jobs:
     <<: *defaults
     steps:
       - auth_and_checkout
-      - run: which jq
+      - run: git branch
 
   # Purpose: In a Linux environment, install the published version of the plugin whose tag is `latest-rc`, then run the
   # smoke test script against it. This helps ensure the overall stability of a release candidate, so we can confidently
