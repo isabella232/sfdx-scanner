@@ -118,6 +118,10 @@ commands:
           name: "Install release candidate"
           command: sfdx plugins:install @salesforce/sfdx-scanner@latest-rc
 
+      - run:
+          name: "Log installed plugins"
+          command: sfdx plugins
+
 jobs:
   # Purpose: Performs all of the necessary setup for subsequent jobs to work. In general, all workflows should probably
   # start with this job.
