@@ -345,7 +345,9 @@ jobs:
     <<: *defaults
     steps:
       - auth_and_checkout
-      - run: .circleci/validate-candidate-branch.sh ${CIRCLE_BRANCH}
+      - run: .circleci/validate-candidate-branch.sh "v2-10-1005" || (echo "run 1 failed" && exit 0)
+      - run: .circleci/validate-candidate-branch.sh "dev" || (echo "run 2 failed" && exit 0)
+      - run: .circleci/validate-candidate-branch.sh "v2-10-1006" || (echo "run 3 failed" && exit 0)
 
   # Purpose: In a Linux environment, install the published version of the plugin whose tag is `latest-rc`, then run the
   # smoke test script against it. This helps ensure the overall stability of a release candidate, so we can confidently
