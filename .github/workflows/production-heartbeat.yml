@@ -47,7 +47,7 @@ jobs:
           {"payload": {
             "summary": "Hardcoded test alert",
             "source": "Github Actions",
-            "severity": "warning",
+            "severity": "info",
             "custom_details": "This is irrelevant"
           },
           "links": [{
