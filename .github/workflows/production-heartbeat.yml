@@ -47,7 +47,7 @@ jobs:
           {"payload": {
             "summary": "Hardcoded test alert",
             "source": "Github Actions",
-            "severity": "info",
+            "severity": "critical",
             "custom_details": "This is irrelevant"
           },
           "links": [{
@@ -55,7 +55,7 @@ jobs:
             "text": "Link to action execution"
           }],
           "event_action": "trigger",
-          "dedup_key": "GH-HB-${{ matrix.os.vm }}-${{ matrix.node }}",
+          "dedup_key": "GH-HBasdfasdfasdf-${{ matrix.os.vm }}-${{ matrix.node }}",
           "routing_key": "${{ secrets.PAGERDUTY_HEARTBEAT_KEY }}"
           }
           EOF
