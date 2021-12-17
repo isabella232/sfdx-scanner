@@ -82,7 +82,7 @@ export abstract class BaseEslintEngine extends AbstractRuleEngine {
 	private catalog: Catalog;
 
 	// We'll leave init abstract to allow implementations to initialize
-	async abstract init(): Promise<void>;
+	abstract init(): Promise<void>;
 
 	async initializeContents(strategy: EslintStrategy, baseDependencies = new StaticDependencies()): Promise<void> {
 		if (this.initializedBase) {
@@ -256,9 +256,9 @@ export abstract class BaseEslintEngine extends AbstractRuleEngine {
 
 	getNormalizedSeverity(severity: number): Severity {
 		switch (severity) {
-			case 1: 
+			case 1:
 				return Severity.MODERATE;
-			case 2: 
+			case 2:
 				return Severity.HIGH;
 			default:
 				return Severity.MODERATE;
