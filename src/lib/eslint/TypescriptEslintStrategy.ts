@@ -62,16 +62,14 @@ export class TypescriptEslintStrategy implements EslintStrategy {
 
 		const pathToExtendedBaseConfig = require.resolve('@typescript-eslint/eslint-plugin')
 			.replace('index.js', path.join('configs', 'eslint-recommended.js'));
-		this.extendedEslintConfig = require(pathToExtendedBaseConfig).default.overrides[0];
-
+		this.extendedEslintConfig = require(pathToExtendedBaseConfig).overrides[0];
 		const pathToUntypedRecommendedConfig = require.resolve('@typescript-eslint/eslint-plugin')
-			.replace('index.js', path.join('configs', 'recommended.json'));
-		this.untypedConfig = JSON.parse(await this.fileHandler.readFile(pathToUntypedRecommendedConfig));
+			.replace('index.js', path.join('configs', 'recommended.js'));
+		this.untypedConfig = require(pathToUntypedRecommendedConfig);
 
 		const pathToTypedRecommendedConfig = require.resolve('@typescript-eslint/eslint-plugin')
-			.replace('index.js', path.join('configs', 'recommended-requiring-type-checking.json'));
-		this.typedConfig = JSON.parse(await this.fileHandler.readFile(pathToTypedRecommendedConfig));
-
+			.replace('index.js', path.join('configs', 'recommended-requiring-type-checking.js'));
+		this.typedConfig = require(pathToTypedRecommendedConfig);
 		this.initialized = true;
 	}
 
