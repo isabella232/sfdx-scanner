@@ -54,7 +54,8 @@ export class VersionUpgradeManager {
 	private upgradeScriptsByVersion: Map<string,VersionUpgradeScript>;
 
 	constructor() {
-		this.currentVersion = require('../../../package.json').version;
+		/* eslint-disable-next-line @typescript-eslint/no-var-requires */
+		this.currentVersion = require('../../../package.json').version; // Using a `require()` call is much easier here than using `import()`.
 		this.upgradeScriptsByVersion = upgradeScriptsByVersion;
 	}
 

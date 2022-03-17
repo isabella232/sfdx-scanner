@@ -116,7 +116,9 @@ export type ESRuleMetadata = {
  */
 export type ESRule = {
 	meta: ESRuleMetadata;
-	create: Function;
+	// ESLint-type rules are created by invoking a method that accepts a Context object and returns an object with visitor
+	// methods for node types.
+	create: (LooseObject) => LooseObject;
 }
 
 /**
