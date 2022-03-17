@@ -22,7 +22,8 @@ export type EngineConfigContent = {
 }
 
 const DEFAULT_CONFIG: ConfigContent = {
-	currentVersion: require('../../../package.json').version,
+	/* eslint-disable-next-line @typescript-eslint/no-var-requires */
+	currentVersion: require('../../../package.json').version, // Doing a `require()` call is significantly easier than using `import` here.
 	engines: [
 		{
 			name: ENGINE.PMD,
@@ -78,7 +79,7 @@ const DEFAULT_CONFIG: ConfigContent = {
 
 class TypeChecker {
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	stringArrayCheck = (value: any, propertyName: string, engine: ENGINE): boolean => {
 		if (Array.isArray(value)) {
 			if (value.length > 0) {
@@ -96,7 +97,7 @@ class TypeChecker {
 		}
 	};
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	booleanCheck = (value: any, propertyName: string, engine: ENGINE): boolean => {
 		if (typeof value === 'boolean') {
 			return true;
@@ -104,6 +105,7 @@ class TypeChecker {
 		throw SfdxError.create('@salesforce/sfdx-scanner', 'Config', 'InvalidBooleanValue', [propertyName, engine.valueOf(), String(value)]);
 	};
 
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	numberCheck = (value: any, propertyName: string, engine: ENGINE): boolean => {
 		if (typeof value === 'number') {
 			return true;

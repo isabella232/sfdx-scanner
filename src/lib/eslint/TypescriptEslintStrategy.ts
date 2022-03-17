@@ -66,15 +66,15 @@ export class TypescriptEslintStrategy implements EslintStrategy {
 
 		const pathToExtendedBaseConfig = require.resolve('@typescript-eslint/eslint-plugin')
 			.replace('index.js', path.join('configs', 'eslint-recommended.js'));
-		this.extendedEslintConfig = require(pathToExtendedBaseConfig).overrides[0];
+		this.extendedEslintConfig = (await import(pathToExtendedBaseConfig)).overrides[0];
 
 		const pathToUntypedRecommendedConfig = require.resolve('@typescript-eslint/eslint-plugin')
 			.replace('index.js', path.join('configs', 'recommended.js'));
-		this.untypedConfig = require(pathToUntypedRecommendedConfig);
+		this.untypedConfig = await import(pathToUntypedRecommendedConfig);
 
 		const pathToTypedRecommendedConfig = require.resolve('@typescript-eslint/eslint-plugin')
 			.replace('index.js', path.join('configs', 'recommended-requiring-type-checking.js'));
-		this.typedConfig = require(pathToTypedRecommendedConfig);
+		this.typedConfig = await import(pathToTypedRecommendedConfig);
 
 		this.initialized = true;
 	}
@@ -145,7 +145,7 @@ export class TypescriptEslintStrategy implements EslintStrategy {
 			|| EslintStrategyHelper.getDefaultConfig(this.baseEslintConfig, ruleName);
 	}
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	async getRunConfig(engineOptions: Map<string, string>): Promise<Record<string, any>> {
 		const tsconfigPath = await this.findTsconfig(engineOptions);
 

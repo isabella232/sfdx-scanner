@@ -46,7 +46,7 @@ export function getDummyEsRule(category = 'problem', description = 'my descripti
 				element: 'value'
 			}]
 		},
-		/* eslint-disable @typescript-eslint/no-empty-function */
+		/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 		create: () => { }
 	}
 }
@@ -65,7 +65,7 @@ export function getDummyTypescriptRuleMap(): Map<string,ESRule> {
 				element: 'value'
 			}]
 		},
-		/* eslint-disable @typescript-eslint/no-empty-function */
+		/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 		create: () => { }
 	});
 	dummyMap.set('fake-deprecated', {
@@ -81,7 +81,7 @@ export function getDummyTypescriptRuleMap(): Map<string,ESRule> {
 				element: 'value'
 			}]
 		},
-		/* eslint-disable @typescript-eslint/no-empty-function */
+		/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 		create: () => { }
 	});
 	dummyMap.set('fake-extended-a', {
@@ -96,7 +96,7 @@ export function getDummyTypescriptRuleMap(): Map<string,ESRule> {
 				element: 'value'
 			}]
 		},
-		/* eslint-disable @typescript-eslint/no-empty-function */
+		/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 		create: () => { }
 	});
 	dummyMap.set('fake-extended-b', {
@@ -111,7 +111,7 @@ export function getDummyTypescriptRuleMap(): Map<string,ESRule> {
 				element: 'value'
 			}]
 		},
-		/* eslint-disable @typescript-eslint/no-empty-function */
+		/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 		create: () => { }
 	});
 	dummyMap.set('@typescript-eslint/fake-extended-a', {
@@ -127,7 +127,7 @@ export function getDummyTypescriptRuleMap(): Map<string,ESRule> {
 				element: 'value'
 			}]
 		},
-		/* eslint-disable @typescript-eslint/no-empty-function */
+		/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 		create: () => { }
 	});
 	dummyMap.set('@typescript-eslint/renamed-b-extension', {
@@ -143,7 +143,7 @@ export function getDummyTypescriptRuleMap(): Map<string,ESRule> {
 				element: 'value'
 			}]
 		},
-		/* eslint-disable @typescript-eslint/no-empty-function */
+		/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 		create: () => { }
 	});
 

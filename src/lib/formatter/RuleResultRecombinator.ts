@@ -31,7 +31,7 @@ export class RuleResultRecombinator {
 				formattedResults = await constructSarif(results, executedEngines);
 				break;
 			case OUTPUT_FORMAT.TABLE:
-				formattedResults = this.constructTable(results); 
+				formattedResults = this.constructTable(results);
 				break;
 			case OUTPUT_FORMAT.XML:
 				formattedResults = this.constructXml(results);
@@ -48,7 +48,7 @@ export class RuleResultRecombinator {
 			return 0;
 		}
 		let minSev = null;
-		
+
 		// if -n or -s flag used, minSev is calculated with normal value
 		for (const res of results) {
 			for (const violation of res.violations) {
@@ -58,7 +58,7 @@ export class RuleResultRecombinator {
 				}
 			}
 		}
-		
+
 		// After iterating through all of the results, return the minimum severity we found (or 0 if we still have a null value).
 		return minSev || 0;
 	}
@@ -295,7 +295,7 @@ URL: ${url}
 
 		const csvRows = [];
 
-		const columns: string[] = ['Problem', 'File', 'Severity']; 
+		const columns: string[] = ['Problem', 'File', 'Severity'];
         if (normalizeSeverity) {
            columns.push('Normalized Severity')
         }
@@ -320,7 +320,6 @@ URL: ${url}
 		// Force all cells to have quotes
 		const csvOptions = {
 			quoted: true,
-			// eslint-disable-next-line @typescript-eslint/camelcase
 			quoted_empty: true
 		};
 		return new Promise((resolve, reject) => {

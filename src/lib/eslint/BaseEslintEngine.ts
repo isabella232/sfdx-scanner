@@ -36,6 +36,7 @@ export interface EslintStrategy {
 	getEngine(): ENGINE;
 
 	/** Get eslint engine to use for scanning. */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	getRunConfig(engineOptions: Map<string, string>): Promise<Record<string, any>>;
 
 	/** Get languages supported by engine */

@@ -14,7 +14,7 @@ export type Rule = {
 }
 
 export type LooseObject = {
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	[key: string]: any;
 }
 
@@ -107,7 +107,7 @@ export type ESRuleMetadata = {
 		extendsBaseRule?: boolean|string;
 		url: string;
 	};
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	schema: Record<string, any>[];
 }
 

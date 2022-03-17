@@ -99,7 +99,7 @@ export class CustomEslintEngine extends AbstractRuleEngine {
 		return results;
 	}
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	private async extractConfig(configFile: string): Promise<Record<string, any>> {
 
 		const fileHandler = this.dependencies.getFileHandler();

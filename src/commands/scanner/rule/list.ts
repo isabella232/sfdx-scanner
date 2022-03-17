@@ -93,7 +93,7 @@ export default class List extends ScannerCommand {
 		return rules;
 	}
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	private formatRulesForDisplay(rules: Rule[]): Record<string, any>[] {
 		// Truncate ruleset values
 		const rulesetTruncatedRules = this.truncateRulesetValues(rules);
@@ -105,7 +105,7 @@ export default class List extends ScannerCommand {
 		return transformedRules;
 	}
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
+	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 	private transformKeysToMatchColumns(rule: Rule): Record<string, any> {
 		// Map rule fields to the matching column
 		const transformedRule = {};
