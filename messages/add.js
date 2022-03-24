@@ -16,6 +16,7 @@ module.exports = {
 	},
 	"errors": {
 		"invalidFilePath": "Failed to find any file or directory with path: %s",
+		"noMatchingPaths": "No registered custom rules match the provided paths.",
 		"readCustomRulePathFileFailed": "Failed to read custom rule path file: %s",
 		"writeCustomRulePathFileFailed": "Failed to write to custom rule path file: %s"
 	},

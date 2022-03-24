@@ -12,7 +12,8 @@ specify one or more paths to remove, or omit it to receive a list of all valid c
 		"pathCannotBeEmpty": "Path cannot be empty"
 	},
 	"errors": {
-		"noMatchingPaths": "No registered custom rules match the provided paths."
+		"noMatchingPaths": "No registered custom rules match the provided paths.",
+		"wronglyTypedPaths": "All provided paths must be strings"
 	},
 	"output": {
 		"aborted": "Operation aborted.",

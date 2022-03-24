@@ -19,6 +19,7 @@ export class JreSetupManagerDependencies {
 	autoDetectJavaHome(): Promise<string> {
 		return new Promise<string>((resolve) => {
 			findJavaHome({allowJre: true}, (err, home) => {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				resolve(err ? null : home);
 			});
 		});
@@ -84,7 +85,7 @@ class JreSetupManager extends AsyncCreatable {
 	}
 
 	private findJavaHomeFromSysVariables(): string {
-		let javaHome = null;
+		let javaHome: string = null;
 		const env = process.env;
 		for (const sysVariable of JAVA_HOME_SYSTEM_VARIABLES) {
 			javaHome = env[sysVariable];
@@ -105,6 +106,7 @@ class JreSetupManager extends AsyncCreatable {
 		try {
 			await fileHandler.stats(javaHome);
 		} catch (error) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
 			throw SfdxError.create('@salesforce/sfdx-scanner', 'jreSetupManager', 'InvalidJavaHome', [javaHome, error.code]);
 		}
 	}
@@ -119,7 +121,7 @@ class JreSetupManager extends AsyncCreatable {
 		// The version number could be of the format 11.0 or 1.8 or 14
 		const regex = /(\d+)(\.(\d+))?/;
 		const matchedParts = regex.exec(versionOut);
-		this.logger.trace(`Version output match for pattern ${regex} is ${matchedParts}`);
+		this.logger.trace(`Version output match for pattern ${regex.toString()} is ${JSON.stringify(matchedParts)}`);
 
 		// matchedParts should have four groups: "11.0", "11", ".0", "0" or "14", "14", undefined, undefined
 		if (!matchedParts || matchedParts.length < 4) {
@@ -135,10 +137,10 @@ class JreSetupManager extends AsyncCreatable {
 		// If either version part clicks, we should be good.
 		if (majorVersion >= 9) {
 			// Accept if Major version is greater than or equal to 9
-			version += majorVersion + (minorVersion ? `.${minorVersion}` : '');
+			version = `${majorVersion}${minorVersion ? `.${minorVersion}` : ''}`;
 		} else if (majorVersion === 1 && minorVersion === 8) {
 			// Accommodating 1.8
-			version += majorVersion + '.' + minorVersion;
+			version = `${majorVersion}.${minorVersion}`;
 		} else {
 			// Not matching what we are looking for
 			throw SfdxError.create('@salesforce/sfdx-scanner', 'jreSetupManager', 'InvalidVersion', [version]);

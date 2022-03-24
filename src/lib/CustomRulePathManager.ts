@@ -5,8 +5,10 @@ import {CUSTOM_PATHS_FILE} from '../Constants';
 import {RulePathManager} from './RulePathManager';
 import {RuleEngine} from './services/RuleEngine';
 import {FileHandler} from './util/FileHandler';
+import { Stats } from 'fs';
 import * as PrettyPrinter from './util/PrettyPrinter';
 import { Controller } from '../Controller';
+import { LooseObject } from '../types';
 
 export type RulePathEntry = Map<string, Set<string>>;
 export type RulePathMap = Map<string, RulePathEntry>;
@@ -36,19 +38,21 @@ export class CustomRulePathManager implements RulePathManager {
 
 		this.logger.trace(`Initializing CustomRulePathManager.`);
 		// Read from the JSON and use it to populate the map.
-		let data = null;
+		let data: string = null;
 		try {
 			data = await this.readRulePathFile();
 		} catch (e) {
 			// An ENOENT error is fine, because it just means the file doesn't exist yet. We'll respond by spoofing a JSON with
 			// no information in it.
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 			if (e.code === 'ENOENT') {
 				this.logger.trace(`CustomRulePath file does not exist yet. In the process of creating a new file.`);
 				data = EMPTY_JSON_FILE;
 			} else {
 				//  Any other error needs to be rethrown, and since it could be arcane or weird, we'll also prepend it with a
 				//  header so it's clear where it came from.
-				throw SfdxError.create('@salesforce/sfdx-scanner', 'add', 'errors.readCustomRulePathFileFailed', [e.message]);
+				const message: string = e instanceof Error ? e.message : e as string;
+				throw SfdxError.create('@salesforce/sfdx-scanner', 'add', 'errors.readCustomRulePathFileFailed', [message]);
 			}
 		}
 		// If file existed but was empty, replace the whitespace/blank with empty JSON
@@ -58,7 +62,7 @@ export class CustomRulePathManager implements RulePathManager {
 		}
 
 		// Now that we've got the file contents, let's turn it into a JSON.
-		const json = JSON.parse(data);
+		const json: LooseObject = JSON.parse(data) as LooseObject;
 		this.pathsByLanguageByEngine = CustomRulePathManager.convertJsonDataToMap(json);
 		this.logger.trace(`Initialized CustomRulePathManager. pathsByLanguageByEngine: ${PrettyPrinter.stringifyMapOfMaps(this.pathsByLanguageByEngine)}`);
 
@@ -66,7 +70,7 @@ export class CustomRulePathManager implements RulePathManager {
 	}
 
 	public async addPathsForLanguage(language: string, paths: string[]): Promise<string[]> {
-		this.logger.trace(`About to add paths[${paths}] for language ${language}`);
+		this.logger.trace(`About to add paths[${JSON.stringify(paths)}] for language ${language}`);
 		const classpathEntries = await this.expandPaths(paths);
 		// Identify the engine for each path and put them in the appropriate map and inner map.
 		classpathEntries.forEach((entry) => {
@@ -102,13 +106,14 @@ export class CustomRulePathManager implements RulePathManager {
 	public getAllPaths(): string[] {
 		// We'll combine every entry set for every language in every engine into a single array. We don't care about
 		// uniqueness right now.
-		let rawResults = [];
+		let rawResults: string[] = [];
 
 		this.engines.forEach((engine) => {
 			if (this.hasPathsForEngine(engine.getName())) {
 				const pathsByLanguage = this.getPathsByEngine(engine.getName());
 				for (const pathSet of pathsByLanguage.values()) {
-					rawResults = [...rawResults, ...Array.from(pathSet)];
+					const pathSetArray: string[] = Array.from(pathSet);
+					rawResults = [...rawResults, ...pathSetArray];
 				}
 			}
 		});
@@ -116,7 +121,7 @@ export class CustomRulePathManager implements RulePathManager {
 	}
 
 	public async getMatchingPaths(paths: string[]): Promise<string[]> {
-		this.logger.trace(`Returning paths that match patterns [${paths}]`);
+		this.logger.trace(`Returning paths that match patterns [${JSON.stringify(paths)}]`);
 
 		// Expand the patterns into actual paths. E.g., expand directories into the rule objects they contain, etc.
 		const expandedPaths = await this.expandPaths(paths);
@@ -138,12 +143,12 @@ export class CustomRulePathManager implements RulePathManager {
 	}
 
 	public async removePaths(paths: string[]): Promise<string[]> {
-		this.logger.trace(`Removing paths [${paths}]`);
+		this.logger.trace(`Removing paths [${JSON.stringify(paths)}]`);
 
 		// Expand the patterns into actual paths that we can delete.
 		const expandedPaths = await this.expandPaths(paths);
 		// For logging and display purposes, we'll want to track the paths that we actually delete.
-		const deletedPaths = [];
+		const deletedPaths: string[] = [];
 
 		expandedPaths.forEach((p) => {
 			// Determine the engine associated with the provided path.
@@ -182,17 +187,20 @@ export class CustomRulePathManager implements RulePathManager {
 		} catch (e) {
 			// If the write failed, the error might be arcane or confusing, so we'll want to prepend the error with a header
 			// so it's at least obvious what failed, if not how or why.
-			throw SfdxError.create('@salesforce/sfdx-scanner', 'add', 'errors.writeCustomRulePathFileFailed', [e.message]);
+			const message: string = e instanceof Error ? e.message : e as string;
+			throw SfdxError.create('@salesforce/sfdx-scanner', 'add', 'errors.writeCustomRulePathFileFailed', [message]);
 		}
 	}
 
-	private static convertJsonDataToMap(json): RulePathMap {
-		const map = new Map();
+	private static convertJsonDataToMap(json: LooseObject): RulePathMap {
+		const map: Map<string,RulePathEntry> = new Map();
 		for (const key of Object.keys(json)) {
 			const engine = key;
-			const val = json[key];
-			const innerMap = new Map();
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			const val: LooseObject = json[key];
+			const innerMap: Map<string,Set<string>> = new Map();
 			for (const lang of Object.keys(val)) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				innerMap.set(lang, new Set(val[lang]));
 			}
 			map.set(engine, innerMap);
@@ -236,7 +244,7 @@ export class CustomRulePathManager implements RulePathManager {
 	private async expandPaths(paths: string[]): Promise<string[]> {
 		const classpathEntries: string[] = [];
 		for (const p of paths) {
-			let stats;
+			let stats: Stats;
 			try {
 				this.logger.trace(`Fetching stats for path ${p}`);
 				stats = await this.fileHandler.stats(p);

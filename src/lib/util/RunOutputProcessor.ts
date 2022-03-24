@@ -29,6 +29,7 @@ export class RunOutputProcessor {
 
 
 	public processRunOutput(rrr: RecombinedRuleResults): AnyJson {
+		/* eslint-disable @typescript-eslint/no-unsafe-return */
 		const {minSev, summaryMap, results} = rrr;
 		// If the results are an empty string, it means no violations were found.
 		if (results === '') {
@@ -54,7 +55,7 @@ export class RunOutputProcessor {
 		if (minSev > 0 && this.opts.violationsCauseException) {
 			throw new SfdxError(msg, null, null, minSev);
 		} else if (this.shouldErrorForSeverity(minSev, this.opts.severityForError)) {
-			// We want to throw an error when the highest severity (smallest num) is 
+			// We want to throw an error when the highest severity (smallest num) is
 			// equal to or more severe (equal to or less than number-wise) than the inputted number
 			throw new SfdxError(msg, null, null, minSev);
 		} else if (msg && msg.length > 0) {
@@ -81,7 +82,7 @@ export class RunOutputProcessor {
 		return this.opts.violationsCauseException ? INTERNAL_ERROR_CODE : 1;
 	}
 
-	// determines if -s flag should cause an error 
+	// determines if -s flag should cause an error
 	private shouldErrorForSeverity(minSev: number, severityForError): boolean {
 		if (severityForError === undefined) {
 			return false; // flag not used
@@ -89,9 +90,9 @@ export class RunOutputProcessor {
 		if (minSev === 0) {
 			return false;
 		}
-		
+
 		if (minSev <= this.opts.severityForError) {
-			return true; 
+			return true;
 		}
 		return false;
 	}
@@ -128,7 +129,8 @@ export class RunOutputProcessor {
 			fs.writeFileSync(this.opts.outfile, results);
 		} catch (e) {
 			// Rethrow any errors as SfdxErrors.
-			throw new SfdxError(e.message || e, null, null, this.getInternalErrorCode());
+			const message: string = e instanceof Error ? e.message : e as string;
+			throw new SfdxError(message, null, null, this.getInternalErrorCode());
 		}
 		// Return a message indicating the action we took.
 		return runMessages.getMessage('output.writtenToOutFile', [this.opts.outfile]);
@@ -158,6 +160,8 @@ export class RunOutputProcessor {
 				if (typeof results === 'string') {
 					throw new SfdxError(msg, null, null, this.getInternalErrorCode());
 				}
+				// The linter complains because the `rows` and `columns` properties are technically `any`.
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				this.ux.table(results.rows, results.columns);
 				break;
 			default:

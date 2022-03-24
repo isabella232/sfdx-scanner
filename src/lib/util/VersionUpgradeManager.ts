@@ -1,5 +1,5 @@
 // ================ IMPORTS ===================
-import semver = require('semver');
+import * as semver from 'semver';
 import {Messages} from '@salesforce/core';
 import {ConfigContent, EngineConfigContent} from './Config';
 import {ENGINE} from '../../Constants';
@@ -54,7 +54,7 @@ export class VersionUpgradeManager {
 	private upgradeScriptsByVersion: Map<string,VersionUpgradeScript>;
 
 	constructor() {
-		/* eslint-disable-next-line @typescript-eslint/no-var-requires */
+		/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 		this.currentVersion = require('../../../package.json').version; // Using a `require()` call is much easier here than using `import()`.
 		this.upgradeScriptsByVersion = upgradeScriptsByVersion;
 	}
@@ -82,13 +82,14 @@ export class VersionUpgradeManager {
 		// Handle each upgrade script in sequence.
 		for (const version of versions) {
 			// Store the config as it currently exists.
-			const existingConfig: ConfigContent = JSON.parse(JSON.stringify(config));
+			const existingConfig: ConfigContent = JSON.parse(JSON.stringify(config)) as ConfigContent;
 			try {
 				await this.upgradeScriptsByVersion.get(version)(config);
 			} catch (e) {
 				// If the script failed, prefix the error so it's clear where it came from, then throw a new error with
 				// the prefixed message and the last safe configuration.
-				throw new VersionUpgradeError(messages.getMessage('upgradeFailed', [version, e.message || e]), existingConfig);
+				const message: string = e instanceof Error ? e.message : e as string;
+				throw new VersionUpgradeError(messages.getMessage('upgradeFailed', [version, message]), existingConfig);
 			}
 			// If we're here, we're considered to have successfully upgraded to this version. So we'll update the config
 			// to reflect that.

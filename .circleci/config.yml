@@ -206,10 +206,10 @@ jobs:
 
       # Linting
       # NOTE: This step is temporarily disabled, until we can upgrade the versions of eslint and its plugins that we use.
-#      - run:
-#          name: eslint
-#          command: yarn lint --format junit --output-file test-results/eslint/eslint.xml
-#          when: always
+      - run:
+          name: eslint
+          command: yarn lint --format junit --output-file test-results/eslint/eslint.xml
+          when: always
 
       - process_unit_test_results
 
@@ -264,12 +264,11 @@ jobs:
           when: always
 
       # Linting
-      # NOTE: This step is temporarily disabled, until we can upgrade the versions of eslint and its plugins that we use.
-#      - run:
-#          name: eslint
-#          command: yarn lint --format junit --output-file test-results/eslint/eslint.xml
-#          shell: bash.exe
-#          when: always
+      - run:
+          name: eslint
+          command: yarn lint --format junit --output-file test-results/eslint/eslint.xml
+          shell: bash.exe
+          when: always
 
       - process_unit_test_results
 

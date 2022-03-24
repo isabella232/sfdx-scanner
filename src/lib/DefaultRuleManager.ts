@@ -2,7 +2,7 @@ import {Logger, Messages, SfdxError} from '@salesforce/core';
 import * as assert from 'assert';
 import {Stats} from 'fs';
 import {inject, injectable} from 'tsyringe';
-import {EngineExecutionDescriptor, RecombinedRuleResults, Rule, RuleGroup, RuleResult, RuleTarget} from '../types';
+import {EngineExecutionDescriptor, RecombinedRuleResults, Rule, RuleGroup, RuleResult, RuleTarget, TargetPattern} from '../types';
 import {isEngineFilter, RuleFilter} from './RuleFilter';
 import {OutputOptions, RuleManager} from './RuleManager';
 import {RuleResultRecombinator} from './formatter/RuleResultRecombinator';
@@ -118,11 +118,12 @@ export class DefaultRuleManager implements RuleManager {
 			const ps: Promise<RuleResult[]>[] = runDescriptorList.map(({engine, descriptor}) => engine.runEngine(descriptor));
 			const psResults: RuleResult[][] = await Promise.all(ps);
 			psResults.forEach(r => results = results.concat(r));
-			this.logger.trace(`Received rule violations: ${results}`);
+			this.logger.trace(`Received rule violations: ${JSON.stringify(results)}`);
 			this.logger.trace(`Recombining results into requested format ${outputOptions.format}`);
 			return await RuleResultRecombinator.recombineAndReformatResults(results, outputOptions.format, executedEngines);
 		} catch (e) {
-			throw new SfdxError(e.message || e);
+			const message: string = e instanceof Error ? e.message : e as string;
+			throw new SfdxError(message);
 		}
 	}
 
@@ -156,8 +157,8 @@ export class DefaultRuleManager implements RuleManager {
 		const engineTargets = await engine.getTargetPatterns();
 		assert(engineTargets);
 		// We also need to do a bit of processing on the patterns we were given.
-		const positivePatterns = [];
-		const negativePatterns = [];
+		const positivePatterns: string[] = [];
+		const negativePatterns: TargetPattern[] = [];
 		// This regex will help us identify and resolve relative paths.
 		const dotNotationRegex = /(\.{1,2}\/)+/;
 		targets.forEach((t) => {

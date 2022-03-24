@@ -6,7 +6,7 @@ import * as wrap from 'word-wrap';
 import {FileHandler} from '../util/FileHandler';
 import * as Mustache from 'mustache';
 import htmlEscaper = require('html-escaper');
-import * as csvStringify from 'csv-stringify';
+import {stringify} from 'csv-stringify';
 import { constructSarif } from './SarifFormatter'
 
 export class RuleResultRecombinator {
@@ -47,7 +47,7 @@ export class RuleResultRecombinator {
 		if (!results || results.length === 0) {
 			return 0;
 		}
-		let minSev = null;
+		let minSev: number = null;
 
 		// if -n or -s flag used, minSev is calculated with normal value
 		for (const res of results) {
@@ -323,7 +323,7 @@ URL: ${url}
 			quoted_empty: true
 		};
 		return new Promise((resolve, reject) => {
-			csvStringify(csvRows, csvOptions,  (err, output) => {
+			stringify(csvRows, csvOptions,  (err, output) => {
 				if (err) {
 					reject(err);
 				}
