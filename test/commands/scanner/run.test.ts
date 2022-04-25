@@ -733,6 +733,7 @@ describe('scanner:run', function () {
 				// Before the violations are logged, there should be 16 log runMessages about implicitly included PMD categories.
 				const regex = new RegExp(events.info.categoryImplicitlyRun.replace(/%s/g, '.*'), 'g');
 				const implicitMessages = violations[0].match(regex);
+				console.log(`${JSON.stringify(implicitMessages)}`);
 				// if this test is not passing and the output seems very large, that's because the test reruns on failures,
 				// and the output accumulates each time, so the output on failure is not the true length of the output
 				// from individual runs. To get what the actual value is, divide the value in the test failure by 6, since
