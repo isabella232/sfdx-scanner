@@ -461,21 +461,33 @@ workflows:
             <<: *testing_filters
           requires:
             - setup
+          matrix:
+            parameters:
+              node-version: [lts, current]
       - windows-unit-tests:
           filters:
             <<: *testing_filters
           requires:
             - setup
+          matrix:
+            parameters:
+              node-version: [ lts, current ]
       - linux-tarball-test:
           filters:
             <<: *testing_filters
           requires:
             - setup
+          matrix:
+            parameters:
+              node-version: [ lts, current ]
       - windows-tarball-test:
           filters:
             <<: *testing_filters
           requires:
             - setup
+          matrix:
+            parameters:
+              node-version: [ lts, current ]
       - self-evaluation:
           filters:
             <<: *testing_filters
