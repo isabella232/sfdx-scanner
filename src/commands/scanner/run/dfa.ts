@@ -98,7 +98,9 @@ export default class Dfa extends ScannerRunCommand {
 		// Entries in the projectdir array must be non-glob paths to existing directories.
 		const fh = new FileHandler();
 		for (const dir of (this.flags.projectdir as string[])) {
+			console.log(`validating dir ${dir}`);
 			if (globby.hasMagic(dir)) {
+				console.log(`dir ${dir} has magic. Throwing exception`);
 				throw SfdxError.create('@salesforce/sfdx-scanner', 'run-dfa', 'validations.projectdirCannotBeGlob', []);
 			} else if (!(await fh.exists(dir))) {
 				throw SfdxError.create('@salesforce/sfdx-scanner', 'run-dfa', 'validations.projectdirMustExist', []);
