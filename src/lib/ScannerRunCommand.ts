@@ -47,6 +47,7 @@ export abstract class ScannerRunCommand extends ScannerCommand {
 		const engineOptions = this.gatherEngineOptions();
 
 		let output: RecombinedRuleResults = null;
+		console.log(`targetpaths ${targetPaths}`);
 		try {
 			output = await ruleManager.runRulesMatchingCriteria(filters, targetPaths, outputOptions, engineOptions, this.pathBasedEngines());
 		} catch (e) {
