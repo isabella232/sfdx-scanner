@@ -46,7 +46,7 @@ export default class Dfa extends ScannerRunCommand {
 			description: messages.getMessage('flags.projectdirDescription'),
 			longDescription: messages.getMessage('flags.projectdirDescriptionLong'),
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-			map: d => path.resolve(normalize(untildify(d))),
+			map: d => normalize(path.resolve(untildify(d))),
 			required: true
 		}),
 		// END: Flags for targeting files.
@@ -98,9 +98,7 @@ export default class Dfa extends ScannerRunCommand {
 		// Entries in the projectdir array must be non-glob paths to existing directories.
 		const fh = new FileHandler();
 		for (const dir of (this.flags.projectdir as string[])) {
-			console.log(`validating dir ${dir}`);
 			if (globby.hasMagic(dir)) {
-				console.log(`dir ${dir} has magic. Throwing exception`);
 				throw SfdxError.create('@salesforce/sfdx-scanner', 'run-dfa', 'validations.projectdirCannotBeGlob', []);
 			} else if (!(await fh.exists(dir))) {
 				throw SfdxError.create('@salesforce/sfdx-scanner', 'run-dfa', 'validations.projectdirMustExist', []);
